@@ -24,4 +24,24 @@ public class GameOOP {
                 unit.step(allTeam);
         }
     }
+
+    // 0 - game continue; 1 - holy win; -1 - dark win; 2 - all team die
+    public int winner() {
+        boolean holyDie = true;
+        boolean darkDie = true;
+
+        for (BaseHero unit : holyTeam) {
+            if (!unit.isDeath()) holyDie = false;
+            break;
+        }
+        for (BaseHero unit : darkTeam) {
+            if (!unit.isDeath()) darkDie = false;
+            break;
+        }
+
+        if (holyDie == darkDie) return 0;
+        else if (holyDie) return -1;
+        else if (darkDie) return 1;
+        else return 2;
+    }
 }

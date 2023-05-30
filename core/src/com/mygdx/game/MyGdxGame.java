@@ -16,9 +16,10 @@ import java.util.Random;
 
 public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture fone, Monk, Warlock, CrossBowMan, Sniper, Bandit, SpearMan, Villager;
+	Texture fone, Monk, Warlock, CrossBowMan, Sniper, Bandit, SpearMan, Villager, Die, WinHoly, WinDark;
 	Music music;
 	GameOOP game;
+	Boolean buttomFlag = false;
 
 	int dx, dy; //correct coordinate
 
@@ -38,6 +39,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		Bandit = new Texture("персонажи/Bandit.png");
 		SpearMan = new Texture("персонажи/SpearMan.png");
 		Villager = new Texture("персонажи/Villager.png");
+		Die = new Texture("персонажи/die.png");
+		WinHoly = new Texture("тексты/winholy.png");
+		WinDark = new Texture("тексты/windark.png");
 
 		music = Gdx.audio.newMusic(Gdx.files.internal("Музыка/paul-romero-rob-king-combat-theme-0" + (new Random().nextInt(4) + 1) + ".mp3"));
 		music.setLooping(true);
@@ -51,7 +55,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.draw(fone, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		for (BaseHero unit : game.allTeam) {
-			if (unit.getClass() == Monk.class) {
+			if (unit.isDeath()) {
+				batch.draw(Die, unit.getCoordinate().getCoordinate()[0] * dx, unit.getCoordinate().getCoordinate()[1] * dy);
+			}
+			else if (unit.getClass() == Monk.class) {
 				batch.draw(Monk, unit.getCoordinate().getCoordinate()[0] * dx, unit.getCoordinate().getCoordinate()[1] * dy);
 			}
 			else if (unit.getClass() == Warlock.class) {
@@ -74,16 +81,33 @@ public class MyGdxGame extends ApplicationAdapter {
 			}
 		}
 
-		for (BaseHero unit : game.allTeam) {
-			unit.step(game.allTeam);
-		}
+		if (game.winner() == 1) batch.draw(WinHoly, Gdx.graphics.getWidth() / 2 - 250, Gdx.graphics.getHeight() / 2);
+		else if (game.winner() == -1) batch.draw(WinDark, Gdx.graphics.getWidth() / 2 - 250, Gdx.graphics.getHeight() / 2);
 
 		batch.end();
+
+
+		if (Gdx.input.isTouched() && !buttomFlag) {
+			for (BaseHero unit : game.allTeam) unit.step(game.allTeam);
+			buttomFlag = true;
+		}
+		if (buttomFlag && !Gdx.input.isTouched()) {
+			buttomFlag = false;
+		}
 	}
 	
 	@Override
 	public void dispose () {
-		batch.dispose();
 		fone.dispose();
+		Monk.dispose();
+		Warlock.dispose();
+		CrossBowMan.dispose();
+		Sniper.dispose();
+		Bandit.dispose();
+		SpearMan.dispose();
+		Villager.dispose();
+		Die.dispose();
+		WinHoly.dispose();
+		WinDark.dispose();
 	}
 }
